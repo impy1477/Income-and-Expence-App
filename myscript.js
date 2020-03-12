@@ -49,6 +49,25 @@ budgetController = (function(){
             data.allItems[type].push(newitem);
         },
         idReturner:data,
+        deletingItem: function(type, id) {
+            var ids, index, t;
+            if (type === "income") {
+                t = "inc";
+            } else {
+                t = "exp";
+            }
+            ids = data.allItems[t].map(function(current){
+                return current.id;
+            });
+            index = ids.indexOf(id);
+            if(index !== -1) {
+                data.allItems[t].splice(index, 1);
+            }
+        },
+        testing: function(){
+            console.log(data.allItems.exp);
+            console.log(data.allItems.inc);
+        }
     }
     
     
@@ -79,6 +98,7 @@ UIController = (function(){
         incomebudget: ".budget__income--value",
         totalbudget: ".budget__value",
         percentagebudget:".budget__expenses--percentage",
+        container:".container"
     }
     var theUIValues = function() {
         return {
@@ -100,7 +120,7 @@ UIController = (function(){
         }
         ID = budgetController.idReturner.allItems[type][budgetController.idReturner.allItems[type].length - 1].id;
         
-        newhtml = html.replace('%id%',ID+"$");
+        newhtml = html.replace('%id%',ID);
         newhtml = newhtml.replace('%description%',description);
         newhtml = newhtml.replace('%value%',value+"$");
         document.querySelector(element).insertAdjacentHTML("beforeend",newhtml);
@@ -122,7 +142,11 @@ UIController = (function(){
         },
         UIadditem: function(){
         return UIaddItem(theUIValues().typeValue, theUIValues().descriptionValue, theUIValues().valueValue);
-    }
+    },
+        UIDeletingItem: function(id) {
+            var idx = document.getElementById(id);
+            idx.parentNode.removeChild(idx);
+        }
     };
 })();
 
@@ -144,7 +168,24 @@ var eventController = (function(budgetCrtl, UICrtl) {
     var init = function() {
         document.querySelector(DOMStrings.addButton).addEventListener("click", function() {
             inClick();
-        })
+        });
+        document.addEventListener("keypress", function(e){
+            if(e.keyCode === 13 || e.which === 13) {
+                inClick();
+            }
+        });
+        document.querySelector(DOMStrings.container).addEventListener("click",function(e){
+            var deletingItem, item, idd; 
+            deletingItem = e.target.parentNode.parentNode.parentNode.parentNode.id;
+            deletingItem = deletingItem.split("-");
+            item = deletingItem[0];
+            idd = parseInt(deletingItem[1]);
+            budgetCrtl.deletingItem(item, idd);
+            UICrtl.UIDeletingItem(e.target.parentNode.parentNode.parentNode.parentNode.id);
+            budgetCrtl.budgetCalculater("exp");
+            budgetCrtl.budgetCalculater("inc");
+            UICrtl.UITotalbudget();
+        });
     }
     
     return {
