@@ -154,15 +154,72 @@ var eventController = (function(budgetCrtl, UICrtl) {
     
     var DOMStrings = UICrtl.thedomStrings();
     
+    const essetials = () => {
+        let monthname, monthnum;
+        monthnum = new Date().getMonth();
+        switch (monthnum) {
+            case 0 : {
+                monthname = 'January';
+                break;
+            }
+            case 1 : {
+                monthname = "February";
+                break;
+            }
+            case 2 : {
+                monthname = "March";
+                break;
+            }
+            case 3 : {
+                monthname = "April";
+                break;
+            }
+            case 4 : {
+                monthname = 'May';
+                break;
+            }
+            case 5 : {
+                monthname = 'June';
+                break;
+            }
+            case 6 : {
+                monthname = 'July';
+                break;
+            }
+            case 7 : {
+                monthname = 'August';
+                break;
+            }
+            case 8 : {
+                monthname = 'September';
+                break;
+            }
+            case 9 : {
+                monthname = 'October';
+                break;
+            }
+            case 10 : {
+                monthname = 'November';
+                break;
+            }
+            case 11 : {
+                monthname = 'December';
+                break;
+            }
+        }
+        document.querySelector(".budget__title--month").textContent = `${monthname}/${new Date().getFullYear()}`;
+        document.querySelector(DOMStrings.description).value = "";
+        document.querySelector(DOMStrings.value).value = "";
+        document.querySelector(DOMStrings.description).focus();
+    }
+    
     var inClick = function() {
         budgetCrtl.addItem(UICrtl.thevalues().typeValue, UICrtl.thevalues().descriptionValue, UICrtl.thevalues().valueValue);
         UICrtl.UIadditem();
         budgetCrtl.budgetCalculater("exp");
         budgetCrtl.budgetCalculater("inc");
         UICrtl.UITotalbudget();
-        document.querySelector(DOMStrings.description).value = "";
-        document.querySelector(DOMStrings.value).value = "";
-        document.querySelector(DOMStrings.description).focus();
+        essetials();
     }
     
     var init = function() {
@@ -190,6 +247,7 @@ var eventController = (function(budgetCrtl, UICrtl) {
     
     return {
         inity: function() {
+            essetials();
             return init();
         },
     }
